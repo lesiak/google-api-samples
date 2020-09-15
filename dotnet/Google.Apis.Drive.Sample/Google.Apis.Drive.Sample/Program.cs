@@ -1,7 +1,9 @@
-using Google.Apis.Drive.v3;
+﻿using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using File = Google.Apis.Drive.v3.Data.File;
 
 namespace Google.Apis.Drive.Sample
 {
@@ -9,13 +11,13 @@ namespace Google.Apis.Drive.Sample
     {
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/drive-dotnet-quickstart.json
-        private static readonly string[] Scopes = {DriveService.Scope.DriveReadonly};
+        private static readonly string[] Scopes = {DriveService.Scope.Drive};
         private const string ApplicationName = "Drive API .NET Quickstart";
-        
+
         public static void Main(string[] args)
         {
             var credential = ServiceAccountCredentialProvider.GetServiceAccountCredentialFromEnv(
-                "DRIVE_CREDENTIALS", 
+                "DRIVE_CREDENTIALS",
                 Scopes,
                 null);
 
@@ -25,11 +27,41 @@ namespace Google.Apis.Drive.Sample
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
             });
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            var targetFolderId = Environment.GetEnvironmentVariable("TARGET_FOLDER_ID");
+            if (targetFolderId == null)
+            {
+                throw new ArgumentException($"Missing environment variable TARGET_FOLDER_ID");
+            }
+            var targetName = "photo.jpg";
+            var sourcePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}/testPhoto.jpg";
+            var contentType = "image/jpeg";
 
+            CreateFile(driveService, targetFolderId, targetName, sourcePath, contentType);
             ListFiles(driveService);
         }
-        
-        
+
+        private static void CreateFile(DriveService driveService,
+            string targetFolderId,
+            string targetName,
+            string sourcePath,
+            string contentType)
+        {
+            File fileMetadata = new File
+            {
+                Name = targetName,
+                Parents = new List<string> {targetFolderId}
+            };
+
+            using FileStream fs = System.IO.File.OpenRead(sourcePath);
+            FilesResource.CreateMediaUpload creteRequest = driveService.Files.Create(fileMetadata, fs, contentType);
+            creteRequest.Fields = "id, parents";
+            creteRequest.ProgressChanged += progress =>
+                Console.WriteLine($"Upload status: {progress.Status} Bytes sent: {progress.BytesSent}");
+            var uploadProgress = creteRequest.Upload();
+            Console.WriteLine(uploadProgress.Status);
+        }
+
 
         private static void ListFiles(DriveService driveService)
         {
@@ -54,6 +86,5 @@ namespace Google.Apis.Drive.Sample
                 Console.WriteLine("No files found.");
             }
         }
-        
     }
 }
