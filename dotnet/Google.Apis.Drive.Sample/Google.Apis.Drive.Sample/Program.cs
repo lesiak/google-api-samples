@@ -74,13 +74,13 @@ namespace Google.Apis.Drive.Sample
 
 
             // List files.
-            IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
+            IList<File> files = listRequest.Execute().Files;
             Console.WriteLine("Files:");
             if (files != null && files.Count > 0)
             {
                 foreach (var file in files)
                 {
-                    Console.WriteLine("{0} ({1}): {2}", file.Name, file.Id, file.WebViewLink);
+                    Console.WriteLine($"{file.Name} ({file.Id}): {file.WebViewLink}");
                 }
             }
             else
