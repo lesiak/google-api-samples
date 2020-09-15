@@ -1,4 +1,4 @@
-﻿using Google.Apis.Drive.v3;
+using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
@@ -31,12 +31,13 @@ namespace Google.Apis.Drive.Sample
         
         
 
-        private static void ListFiles(DriveService service)
+        private static void ListFiles(DriveService driveService)
         {
             // Define parameters of request.
-            FilesResource.ListRequest listRequest = service.Files.List();
+            FilesResource.ListRequest listRequest = driveService.Files.List();
             listRequest.PageSize = 10;
-            listRequest.Fields = "nextPageToken, files(id, name)";
+            listRequest.Fields = "nextPageToken, files(id, name, webViewLink)";
+
 
             // List files.
             IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
@@ -45,7 +46,7 @@ namespace Google.Apis.Drive.Sample
             {
                 foreach (var file in files)
                 {
-                    Console.WriteLine("{0} ({1})", file.Name, file.Id);
+                    Console.WriteLine("{0} ({1}): {2}", file.Name, file.Id, file.WebViewLink);
                 }
             }
             else
