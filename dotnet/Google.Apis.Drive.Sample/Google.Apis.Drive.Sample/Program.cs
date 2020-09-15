@@ -80,6 +80,11 @@ namespace Google.Apis.Drive.Sample
 
             // List files.
             IList<File> files = listRequest.Execute().Files;
+            PrintFiles(files);
+        }
+
+        private static void PrintFiles(IList<File> files)
+        {
             Console.WriteLine("Files:");
             if (files != null && files.Count > 0)
             {
@@ -93,7 +98,7 @@ namespace Google.Apis.Drive.Sample
                 Console.WriteLine("No files found.");
             }
         }
-        
+
         private static void DeleteFile(DriveService driveService, string fileId)
         {
             driveService.Files.Delete(fileId).Execute();
