@@ -54,14 +54,19 @@ namespace Google.Apis.Drive.Sample
                 Name = targetName,
                 Parents = new List<string> {targetFolderId}
             };
-
+            string? uploadedFileId = null;
             using FileStream fs = System.IO.File.OpenRead(sourcePath);
-            FilesResource.CreateMediaUpload creteRequest = driveService.Files.Create(fileMetadata, fs, contentType);
-            creteRequest.Fields = "id, parents";
-            creteRequest.ProgressChanged += progress =>
+            FilesResource.CreateMediaUpload createRequest = driveService.Files.Create(fileMetadata, fs, contentType);
+            createRequest.Fields = "id, parents";
+            createRequest.ProgressChanged += progress =>
                 Console.WriteLine($"Upload status: {progress.Status} Bytes sent: {progress.BytesSent}");
-            var uploadProgress = creteRequest.Upload();
-            Console.WriteLine(uploadProgress.Status);
+            createRequest.ResponseReceived += file =>
+            {
+                uploadedFileId = file.Id;
+                Console.WriteLine($"Created: {file.Id} parents: {file.Parents}");
+            };
+            var uploadProgress = createRequest.Upload();
+            Console.WriteLine($"Final status: {uploadProgress.Status} {uploadedFileId}");
         }
 
 
