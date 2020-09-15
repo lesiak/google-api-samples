@@ -33,14 +33,14 @@ namespace Google.Apis.Drive.Sample
             {
                 throw new ArgumentException($"Missing environment variable TARGET_FOLDER_ID");
             }
+
             var targetName = "photo.jpg";
             var sourcePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}/testPhoto.jpg";
             var contentType = "image/jpeg";
 
             CreateFile(driveService, targetFolderId, targetName, sourcePath, contentType);
-            ListFiles(driveService);
+            ListAllFiles(driveService);
             //DeleteFile(driveService, fileId);
-            
         }
 
         private static void CreateFile(DriveService driveService,
@@ -68,19 +68,26 @@ namespace Google.Apis.Drive.Sample
             var uploadProgress = createRequest.Upload();
             Console.WriteLine($"Final status: {uploadProgress.Status} {uploadedFileId}");
         }
+        
+        private static void ListAllFiles(DriveService driveService)
+        {
+            IList<File> files = FindFiles(driveService);
+            PrintFiles(files);
+        }
 
-
-        private static void ListFiles(DriveService driveService)
+        private static IList<File> FindFiles(DriveService driveService, string? query = null)
         {
             // Define parameters of request.
             FilesResource.ListRequest listRequest = driveService.Files.List();
             listRequest.PageSize = 10;
             listRequest.Fields = "nextPageToken, files(id, name, webViewLink)";
+            if (query != null)
+            {
+                listRequest.Q = query;
+            }
 
-
-            // List files.
             IList<File> files = listRequest.Execute().Files;
-            PrintFiles(files);
+            return files;
         }
 
         private static void PrintFiles(IList<File> files)
