@@ -6,4 +6,8 @@
         <LangVersion>8</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2065" />
+    </ItemGroup>
+
 </Project>
