@@ -14,7 +14,23 @@ namespace Google.Apis.Drive.Sample
         // at ~/.credentials/drive-dotnet-quickstart.json
         private static readonly string[] Scopes = {DriveService.Scope.DriveReadonly};
         private const string ApplicationName = "Drive API .NET Quickstart";
+        
+        public static void Main(string[] args)
+        {
+            var credential = GetServiceAccountCredential("credentials.json", null);
 
+            // Create Drive API service.
+            var driveService = new DriveService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName,
+            });
+
+            ListFiles(driveService);
+
+            Console.Read();
+        }
+        
         private static ServiceAccountCredential GetServiceAccountCredential(
             string pathToJsonFile,
             string emailToImpersonate)
@@ -43,17 +59,8 @@ namespace Google.Apis.Drive.Sample
             return credential;
         }
 
-        public static void Main(string[] args)
+        private static void ListFiles(DriveService service)
         {
-            var credential = GetServiceAccountCredential("credentials.json", null);
-
-            // Create Drive API service.
-            var service = new DriveService(new BaseClientService.Initializer
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = ApplicationName,
-            });
-
             // Define parameters of request.
             FilesResource.ListRequest listRequest = service.Files.List();
             listRequest.PageSize = 10;
@@ -73,8 +80,7 @@ namespace Google.Apis.Drive.Sample
             {
                 Console.WriteLine("No files found.");
             }
-
-            Console.Read();
         }
+        
     }
 }
