@@ -29,7 +29,7 @@ namespace Google.Apis.Drive.Sample
              IEnumerable<string> scopes,
              string emailToImpersonate)
          {
-             string credentialsJson = Environment.GetEnvironmentVariable(envVariableName);
+             var credentialsJson = Environment.GetEnvironmentVariable(envVariableName);
              if (credentialsJson == null)
              {
                  throw new ArgumentException($"Missing environment variable {envVariableName}");
