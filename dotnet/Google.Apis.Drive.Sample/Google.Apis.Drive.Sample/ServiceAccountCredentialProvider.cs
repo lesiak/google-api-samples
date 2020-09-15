@@ -11,7 +11,7 @@ namespace Google.Apis.Drive.Sample
          internal static ServiceAccountCredential GetServiceAccountCredentialFromFile(
             string pathToJsonFile,
             IEnumerable<string> scopes,
-            string emailToImpersonate
+            string? emailToImpersonate
             )
         {
             // Load and deserialize credential parameters from the specified JSON file.
@@ -27,7 +27,7 @@ namespace Google.Apis.Drive.Sample
          internal static ServiceAccountCredential GetServiceAccountCredentialFromEnv(
              string envVariableName,
              IEnumerable<string> scopes,
-             string emailToImpersonate)
+             string? emailToImpersonate)
          {
              var credentialsJson = Environment.GetEnvironmentVariable(envVariableName);
              if (credentialsJson == null)
@@ -43,7 +43,7 @@ namespace Google.Apis.Drive.Sample
          internal static ServiceAccountCredential GetServiceAccountCredentialFromString(
              string credentialsJson,
              IEnumerable<string> scopes,
-             string emailToImpersonate)
+             string? emailToImpersonate)
          {
              // Load and deserialize credential parameters from the specified JSON file.
              var parameters = NewtonsoftJsonSerializer.Instance.Deserialize<JsonCredentialParameters>(credentialsJson);
@@ -53,7 +53,7 @@ namespace Google.Apis.Drive.Sample
          static ServiceAccountCredential ServiceAccountCredential(
             JsonCredentialParameters credentialParameters, 
             IEnumerable<string> scopes,
-            string emailToImpersonate)
+            string? emailToImpersonate)
         {
             // Create a credential initializer with the correct scopes.
             var initializer = new ServiceAccountCredential.Initializer(credentialParameters.ClientEmail)

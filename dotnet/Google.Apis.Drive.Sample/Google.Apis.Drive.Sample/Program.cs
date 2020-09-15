@@ -27,8 +27,6 @@ namespace Google.Apis.Drive.Sample
             });
 
             ListFiles(driveService);
-
-            Console.Read();
         }
         
         
