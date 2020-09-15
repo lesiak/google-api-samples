@@ -35,9 +35,7 @@ namespace Google.Apis.Drive.Sample
                  throw new ArgumentException($"Missing environment variable {envVariableName}");
              }
 
-             // Load and deserialize credential parameters from the specified JSON file.
-             var parameters = NewtonsoftJsonSerializer.Instance.Deserialize<JsonCredentialParameters>(credentialsJson);
-             return ServiceAccountCredential(parameters, scopes, emailToImpersonate);
+             return GetServiceAccountCredentialFromString(credentialsJson, scopes, emailToImpersonate);
          }
          
          internal static ServiceAccountCredential GetServiceAccountCredentialFromString(
