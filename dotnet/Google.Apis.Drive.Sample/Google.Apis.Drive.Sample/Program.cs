@@ -1,10 +1,7 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Drive.v3;
+﻿using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Google.Apis.Json;
 
 namespace Google.Apis.Drive.Sample
 {
@@ -17,7 +14,10 @@ namespace Google.Apis.Drive.Sample
         
         public static void Main(string[] args)
         {
-            var credential = GetServiceAccountCredential("credentials.json", null);
+            var credential = ServiceAccountCredentialProvider.GetServiceAccountCredentialFromEnv(
+                "DRIVE_CREDENTIALS", 
+                Scopes,
+                null);
 
             // Create Drive API service.
             var driveService = new DriveService(new BaseClientService.Initializer
@@ -31,33 +31,7 @@ namespace Google.Apis.Drive.Sample
             Console.Read();
         }
         
-        private static ServiceAccountCredential GetServiceAccountCredential(
-            string pathToJsonFile,
-            string emailToImpersonate)
-        {
-            // Load and deserialize credential parameters from the specified JSON file.
-            JsonCredentialParameters parameters;
-            using (Stream json = new FileStream(pathToJsonFile, FileMode.Open, FileAccess.Read))
-            {
-                parameters = NewtonsoftJsonSerializer.Instance.Deserialize<JsonCredentialParameters>(json);
-            }
-
-            // Create a credential initializer with the correct scopes.
-            var initializer = new ServiceAccountCredential.Initializer(parameters.ClientEmail)
-            {
-                Scopes = Scopes
-            };
-
-            // Configure impersonation (if applicable).
-            if (!string.IsNullOrEmpty(emailToImpersonate))
-            {
-                initializer.User = emailToImpersonate;
-            }
-
-            // Create a service account credential object using the deserialized private key.
-            var credential = new ServiceAccountCredential(initializer.FromPrivateKey(parameters.PrivateKey));
-            return credential;
-        }
+        
 
         private static void ListFiles(DriveService service)
         {
