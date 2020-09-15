@@ -39,6 +39,8 @@ namespace Google.Apis.Drive.Sample
 
             CreateFile(driveService, targetFolderId, targetName, sourcePath, contentType);
             ListFiles(driveService);
+            //DeleteFile(driveService, fileId);
+            
         }
 
         private static void CreateFile(DriveService driveService,
@@ -85,6 +87,11 @@ namespace Google.Apis.Drive.Sample
             {
                 Console.WriteLine("No files found.");
             }
+        }
+        
+        private static void DeleteFile(DriveService driveService, string fileId)
+        {
+            driveService.Files.Delete(fileId).Execute();
         }
     }
 }
