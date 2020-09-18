@@ -20,7 +20,7 @@ namespace DriveQuickstart
         static string[] Scopes = { DriveService.Scope.DriveReadonly };
         static string ApplicationName = "Drive API .NET Quickstart";
 
-        static void Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             UserCredential credential;
 
@@ -47,7 +47,13 @@ namespace DriveQuickstart
             });
 
             // Define parameters of request.
-            ListFiles(service);
+            //ListFiles(service);
+            await foreach (var file in GetFilesAsync(service))
+            {
+                Console.WriteLine("{0} ({1})", file.Name, file.Id);
+            }
+
+            return 0;
         }
 
         private static void ListFiles(DriveService service)
@@ -68,6 +74,30 @@ namespace DriveQuickstart
                 IList<Google.Apis.Drive.v3.Data.File> files = fileList.Files;
                 var nextToken = fileList.NextPageToken;
                 PrintFiles(files);
+
+                pageToken = nextToken;
+            } while (pageToken != null);
+        }
+        
+        private static async IAsyncEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesAsync(DriveService service)
+        {
+            string? pageToken = null;
+            do
+            {
+                FilesResource.ListRequest listRequest = service.Files.List();
+                listRequest.PageSize = 100;
+                listRequest.Fields = "nextPageToken, files(id, name)";
+                listRequest.Q = "name contains 'Programista'";
+                listRequest.PageToken = pageToken;
+                listRequest.IncludeTeamDriveItems = false;
+                listRequest.IncludeItemsFromAllDrives = false;
+
+                // List files.
+                FileList fileList = await listRequest.ExecuteAsync();
+                IList<Google.Apis.Drive.v3.Data.File> files = fileList.Files;
+                var nextToken = fileList.NextPageToken;
+                foreach (var f in files)
+                    yield return f;
 
                 pageToken = nextToken;
             } while (pageToken != null);
