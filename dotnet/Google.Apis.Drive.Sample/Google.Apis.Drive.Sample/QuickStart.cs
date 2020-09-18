@@ -47,6 +47,11 @@ namespace DriveQuickstart
             });
 
             // Define parameters of request.
+            ListFiles(service);
+        }
+
+        private static void ListFiles(DriveService service)
+        {
             string? pageToken = null;
             do
             {
@@ -63,11 +68,9 @@ namespace DriveQuickstart
                 IList<Google.Apis.Drive.v3.Data.File> files = fileList.Files;
                 var nextToken = fileList.NextPageToken;
                 PrintFiles(files);
-                
-                pageToken = nextToken;
-            } while(pageToken != null);
 
-           
+                pageToken = nextToken;
+            } while (pageToken != null);
         }
 
         static void PrintFiles(IList<Google.Apis.Drive.v3.Data.File>? files)
