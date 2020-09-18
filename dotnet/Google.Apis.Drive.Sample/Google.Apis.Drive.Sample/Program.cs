@@ -14,7 +14,7 @@ namespace Google.Apis.Drive.Sample
         private static readonly string[] Scopes = {DriveService.Scope.Drive};
         private const string ApplicationName = "Drive API .NET Quickstart";
 
-        public static void Main(string[] args)
+        public static void Main1(string[] args)
         {
             var credential = ServiceAccountCredentialProvider.GetServiceAccountCredentialFromEnv(
                 "DRIVE_CREDENTIALS",
