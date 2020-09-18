@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DriveQuickstart
 {
-    class Program
+    static class Program
     {
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/drive-dotnet-quickstart.json
@@ -47,13 +47,31 @@ namespace DriveQuickstart
             });
 
             // Define parameters of request.
-            FilesResource.ListRequest listRequest = service.Files.List();
-            listRequest.PageSize = 10;
-            listRequest.Fields = "nextPageToken, files(id, name)";
+            string? pageToken = null;
+            do
+            {
+                FilesResource.ListRequest listRequest = service.Files.List();
+                listRequest.PageSize = 100;
+                listRequest.Fields = "nextPageToken, files(id, name)";
+                listRequest.Q = "name contains 'Programista'";
+                listRequest.PageToken = pageToken;
+                listRequest.IncludeTeamDriveItems = false;
+                listRequest.IncludeItemsFromAllDrives = false;
 
-            // List files.
-            IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute()
-                .Files;
+                // List files.
+                FileList fileList = listRequest.Execute();
+                IList<Google.Apis.Drive.v3.Data.File> files = fileList.Files;
+                var nextToken = fileList.NextPageToken;
+                PrintFiles(files);
+                
+                pageToken = nextToken;
+            } while(pageToken != null);
+
+           
+        }
+
+        static void PrintFiles(IList<Google.Apis.Drive.v3.Data.File>? files)
+        {
             Console.WriteLine("Files:");
             if (files != null && files.Count > 0)
             {
@@ -68,4 +86,5 @@ namespace DriveQuickstart
             }
         }
     }
+    
 }
